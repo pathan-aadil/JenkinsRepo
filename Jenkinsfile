@@ -1,21 +1,29 @@
-pipline{
+pipeline{
+    agent {
+        node{
+            label 'JenkinsSlaveNodeLabel'
+        }
+    }
     stages{
-        stage("chekout code stage"){
-            step{
+        stage('Chekout Code Stage'){
+            steps{
                 git url:'https://github.com/pathan-aadil/JenkinsRepo.git', branch:'main'
-
             }
-
+        }
+        stage('Cleanup'){
+            steps{
+                sh 'docker rm -f $(docker ps -aq)'
+                sh 'docker rmi -f myimage'
+            }
         }
         stage("Build Docker Image"){
             steps{
-                sh'docker build -t myimage'
+                sh 'docker build -t myimage .'
             }
-
         }
-        stage{
-            step{
-                sh'docker run -d -p 8501:8501 myimage'
+        stage('Creat Container'){
+            steps{
+                sh 'docker run -d -p 8501:8501 myimage'
             }
         }
     }
