@@ -7,11 +7,11 @@ pipeline {
                 git url: 'https://github.com/pathan-aadil/JenkinsRepo.git', branch: 'main'
             }
         }
-        stage('cleanup stage') {
+        /*stage('cleanup stage') {
             steps {
                 sh 'docker rmi -f myimage'
                 sh 'docker rm -f $(docker ps -aq)'
-            }
+            }*/
         }
         stage('Build Docker Image') {
             steps {
