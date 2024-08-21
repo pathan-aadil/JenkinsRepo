@@ -11,8 +11,8 @@ pipeline {
             steps {
                 sh 'docker rmi -f myimage'
                 sh 'docker rm -f $(docker ps -aq)'
-            }*/
-        }
+            }
+        }*/
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t myimage .'
