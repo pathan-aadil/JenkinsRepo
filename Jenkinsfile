@@ -1,28 +1,35 @@
-pipeline{
-    agent {
-        node{
-            label 'JenkinsSlaveNodeLabel'
-        }
-    }
-    stages{
-        stage('Chekout Code Stage'){
-            steps{
-                git url:'https://github.com/pathan-aadil/JenkinsRepo.git', branch:'main'
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout code') {
+            steps {
+                git url: 'https://github.com/pathan-aadil/JenkinsRepo.git', branch: 'main'
             }
         }
-        stage('Cleanup'){
-            steps{
-                sh 'docker rm -f $(docker ps -aq)'
+        stage('cleanup stage') {
+            steps {
                 sh 'docker rmi -f myimage'
+                sh 'docker rm -f $(docker ps -aq)'
             }
         }
-        stage("Build Docker Image"){
-            steps{
+        stage('Build Docker Image') {
+            steps {
                 sh 'docker build -t myimage .'
             }
         }
-        stage('Creat Container'){
-            steps{
+       stage('Build and Push Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    sh 'docker tag myimage $DOCKER_USERNAME/myimage'
+                    sh 'docker push $DOCKER_USERNAME/myimage'
+                }
+                   
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
                 sh 'docker run -d -p 8501:8501 myimage'
             }
         }
