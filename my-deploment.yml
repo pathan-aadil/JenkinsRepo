@@ -17,7 +17,7 @@ spec:
                 app: my-app
         spec:
             containers:
-            - image: aadil1142/myimage
+            - image: aadil1142/myimage:latest
               name: mycontainer
               ports:
               - containerPort: 8501
